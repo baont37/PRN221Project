@@ -20,7 +20,7 @@ namespace BusinessObjects
         [StringLength(300)]
         public string AnswerText { get; set; }
 
-        public bool Iscorrect { get; set; }
+        public bool IsCorrect { get; set; }
 
         public virtual Question Question { get; set; }
 

@@ -12,8 +12,12 @@ namespace Repositories
     {
         QuestionAndAnswerDTO Add(int uid, QuestionAndAnswerDTO questionAndAnswer);
 
-        List<QuestionAndAnswerDTO> Get(int uid);
+        List<QuestionAndAnswerDTO> Get(int userId);
 
-        TestInfor GetByAccessKey(string sectionId);
+        TestInforDTO GetByAccessKey(string sectionId);
+
+        List<QuestionAndAnswerDTO> GetBySearch(int userId, string searchKey);
+
+        List<QuestionAndAnswerDTO> GetByPaging(int userId, int pageNumber, int pageSize);
     }
 }

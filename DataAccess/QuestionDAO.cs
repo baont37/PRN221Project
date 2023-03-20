@@ -34,8 +34,8 @@ namespace DataAccess
                         var dem = 0;
                         foreach (var item2 in questionAndAnswer.Answers)
                             {
-                           
-                                if(item2.Iscorrect == true)
+                        var answ = context.Answers.FirstOrDefault(o => o.AnswerId == item2.AnswerId);
+                                if(answ.IsCorrect == true)
                                 {
                                     dem += 1;
                                 }
@@ -60,7 +60,7 @@ namespace DataAccess
                             var answer = new Answer();
                             answer.QuestionId = temp.QuestionId;
                             answer.AnswerText = item2.AnswerText;
-                            answer.Iscorrect = item2.Iscorrect;
+                            answer.IsCorrect = item2.IsCorrect;
                             context.Answers.Add(answer);
                             context.SaveChanges();
                         }
@@ -93,7 +93,6 @@ namespace DataAccess
                             var answerDTO = new AnswerDTO();
                             answerDTO.AnswerId = answer.AnswerId;
                             answerDTO.AnswerText = answer.AnswerText;
-                            answerDTO.Iscorrect = answer.Iscorrect;
                             answerDTOs.Add(answerDTO);
                         }
                         var questionAndAnswer = new QuestionAndAnswerDTO();
@@ -114,13 +113,13 @@ namespace DataAccess
             }
         }
 
-        public TestInfor GetQuestionsByAccessKey(string accessKey)
+        public TestInforDTO GetQuestionsByAccessKey(string accessKey)
         {
             try
             {
                 using (var context = new MyDbContext())
                 {
-                    TestInfor testInfor = new TestInfor();
+                    TestInforDTO testInfor = new TestInforDTO();
                     Section section = context.Sections.FirstOrDefault(o => o.AccessKey == accessKey);
                     Paper paper = context.Papers.FirstOrDefault(o => o.PaperId == section.PaperId);
                     List<QuestionAndAnswerDTO> questionAndAnswerDTOs = new List<QuestionAndAnswerDTO>();
@@ -144,7 +143,6 @@ namespace DataAccess
                             answerDTO.AnswerId = answer.AnswerId;
 
                             answerDTO.AnswerText = answer.AnswerText;
-                            answerDTO.Iscorrect = answer.Iscorrect;
                             answerDTOs.Add(answerDTO);
                         }
                         questionAndAnswer.Answers = answerDTOs;
@@ -152,6 +150,84 @@ namespace DataAccess
                     }
                     testInfor.questionAndAnswerDTOs = questionAndAnswerDTOs;
                     return testInfor;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public List<QuestionAndAnswerDTO> GetQuestionsBySearch(int userId,string searchKey)
+        {
+            try
+            {
+                using (var context = new MyDbContext())
+                {
+                    List<QuestionAndAnswerDTO> questionAndAnswers = new List<QuestionAndAnswerDTO>();
+                    List<Question> questions = context.Questions.Where(o => o.UserId == userId).Where(o=>o.Text.Contains(searchKey)).ToList();
+                    foreach (var item in questions)
+                    {
+                        List<Answer> answers = context.Answers.Where(o => o.QuestionId == item.QuestionId).ToList();
+                        List<AnswerDTO> answerDTOs = new List<AnswerDTO>();
+                        foreach (var answer in answers)
+                        {
+                            var answerDTO = new AnswerDTO();
+                            answerDTO.AnswerId = answer.AnswerId;
+                            answerDTO.AnswerText = answer.AnswerText;
+                            answerDTOs.Add(answerDTO);
+                        }
+                        var questionAndAnswer = new QuestionAndAnswerDTO();
+                        questionAndAnswer.QuestionId = item.QuestionId;
+                        questionAndAnswer.Text = item.Text;
+                        questionAndAnswer.IsMultiChoice = item.IsMultiChoice;
+                        questionAndAnswer.Lever = item.Lever;
+                        questionAndAnswer.Type = item.Type;
+                        questionAndAnswer.Answers = answerDTOs;
+                        questionAndAnswers.Add(questionAndAnswer);
+                    }
+                    return questionAndAnswers;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+
+        public List<QuestionAndAnswerDTO> GetQuestionsByPaging(int userId, int pageNumber,int pageSize)
+        {
+            try
+            {
+                using (var context = new MyDbContext())
+                {
+                    List<QuestionAndAnswerDTO> questionAndAnswers = new List<QuestionAndAnswerDTO>();
+                    List<Question> questions = context.Questions.Where(o => o.UserId == userId).Skip((pageNumber - 1) * pageSize)
+                                                .Take(pageSize)
+                                                .ToList(); ;
+                    foreach (var item in questions)
+                    {
+                        List<Answer> answers = context.Answers.Where(o => o.QuestionId == item.QuestionId).ToList();
+                        List<AnswerDTO> answerDTOs = new List<AnswerDTO>();
+                        foreach (var answer in answers)
+                        {
+                            var answerDTO = new AnswerDTO();
+                            answerDTO.AnswerId = answer.AnswerId;
+                            answerDTO.AnswerText = answer.AnswerText;
+                            answerDTO.IsCorrect = answer.IsCorrect;
+                            answerDTOs.Add(answerDTO);
+                        }
+                        var questionAndAnswer = new QuestionAndAnswerDTO();
+                        questionAndAnswer.QuestionId = item.QuestionId;
+                        questionAndAnswer.Text = item.Text;
+                        questionAndAnswer.IsMultiChoice = item.IsMultiChoice;
+                        questionAndAnswer.Lever = item.Lever;
+                        questionAndAnswer.Type = item.Type;
+                        questionAndAnswer.Answers = answerDTOs;
+                        questionAndAnswers.Add(questionAndAnswer);
+                    }
+                    return questionAndAnswers;
                 }
             }
             catch (Exception e)

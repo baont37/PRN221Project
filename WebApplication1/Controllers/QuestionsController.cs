@@ -34,10 +34,12 @@ namespace WebApplication1.Controllers
                 var uid = items[3].Value;
 
                 UserDTO userCurrent = userRepository.GetUserByUid(uid);
-
-                var question = questionRepository.Add(userCurrent.UserId, questionAndAnswer);
-                return Ok(question);
-
+                var questionAndAnswer1 = new QuestionAndAnswerDTO();
+                if (userCurrent.Role == 1)
+                {
+                    questionAndAnswer1 = questionRepository.Add(userCurrent.UserId, questionAndAnswer);                 
+                }
+                return Ok(questionAndAnswer1);
             }
             catch (Exception e)
             {
@@ -69,7 +71,7 @@ namespace WebApplication1.Controllers
         }
 
         [Authorize]
-        [HttpGet("bao")]
+        [HttpGet("accessKey")]
         public IActionResult GetQuestionBySectionId(string accessKey)
         {
             try
@@ -81,7 +83,7 @@ namespace WebApplication1.Controllers
                 var uid = items[3].Value;
 
                 UserDTO userCurrent = userRepository.GetUserByUid(uid);*/
-                TestInfor testInfor = questionRepository.GetByAccessKey(accessKey);
+                TestInforDTO testInfor = questionRepository.GetByAccessKey(accessKey);
                 return Ok(testInfor);
             }
             catch (Exception e)
@@ -89,5 +91,50 @@ namespace WebApplication1.Controllers
                 return BadRequest(e.Message);
             }
         }
+
+        [Authorize]
+        [HttpGet("search")]
+        public IActionResult GetQuestionBySearch(string searchKey)
+        {
+            try
+            {
+                var user = HttpContext.User;
+                var claims = ((System.Security.Claims.ClaimsIdentity)user.Identity).Claims;
+                var items = claims.ToList();
+                var jsonstr = items.Last().Value;
+                var uid = items[3].Value;
+                UserDTO userCurrent = userRepository.GetUserByUid(uid);
+                List<QuestionAndAnswerDTO> questionAndAnswers = questionRepository.GetBySearch(userCurrent.UserId, searchKey);
+                return Ok(questionAndAnswers);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpGet("paging")]
+        public IActionResult GetQuestionByPaging(int pageNumber, int pageSize)
+        {
+            try
+            {
+                var user = HttpContext.User;
+                var claims = ((System.Security.Claims.ClaimsIdentity)user.Identity).Claims;
+                var items = claims.ToList();
+                var jsonstr = items.Last().Value;
+                var uid = items[3].Value;
+                UserDTO userCurrent = userRepository.GetUserByUid(uid);
+                List<QuestionAndAnswerDTO> questionAndAnswers = questionRepository.GetByPaging(userCurrent.UserId, pageNumber, pageSize);
+                return Ok(questionAndAnswers);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+
+
     }
 }

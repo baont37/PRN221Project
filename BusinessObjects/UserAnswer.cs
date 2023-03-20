@@ -17,10 +17,12 @@ namespace BusinessObjects
         public int AnswerId { get; set; }
 
         public int SectionId { get; set; }
-        public string UserAnswerText { get; set; }
+        public bool Selected { get; set; }
+        public int UserId { get; set; }
 
         public virtual Section Section { get; set; }
         public virtual Answer Answer { get; set; }
+        public virtual User User { get; set; }
     }
 
 }

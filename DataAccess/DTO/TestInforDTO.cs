@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess.DTO
 {
-    public class TestInfor
+    public class TestInforDTO
     {
         public int SectionId { get; set; }
 

@@ -4,14 +4,16 @@ using BusinessObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BusinessObjects.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230320130922_haha")]
+    partial class haha
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,7 +33,7 @@ namespace BusinessObjects.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
 
-                    b.Property<bool>("IsCorrect")
+                    b.Property<bool>("Iscorrect")
                         .HasColumnType("bit");
 
                     b.Property<int>("QuestionId")
@@ -233,16 +235,11 @@ namespace BusinessObjects.Migrations
                     b.Property<bool>("Selected")
                         .HasColumnType("bit");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("UserAnswerId");
 
                     b.HasIndex("AnswerId");
 
                     b.HasIndex("SectionId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("UserAnswers");
                 });
@@ -343,17 +340,9 @@ namespace BusinessObjects.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("BusinessObjects.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Answer");
 
                     b.Navigation("Section");
-
-                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }
