@@ -20,5 +20,15 @@ namespace Repositories.Implements
             return paperDAO.GetPaperAndPaperQuestionsByUserId(uid);
         }
 
+        public List<PaperAndPaperQuestionDTO> GetPaperAndPaperQuestionsByPaging(int uid, int page, int pageSize)
+        {
+            return paperDAO.GetPaperAndPaperQuestionsByPaging(uid,page,pageSize);
+        }
+
+        public List<PaperAndPaperQuestionDTO> GetPaperAndPaperQuestionsBySearch(int uid,string searchKey)
+        {
+            return paperDAO.GetPaperAndPaperQuestionsBySearch(uid,searchKey);
+        }
+
     }
 }

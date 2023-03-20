@@ -76,5 +76,77 @@ namespace DataAccess
             }
         }
 
+        public List<PaperAndPaperQuestionDTO> GetPaperAndPaperQuestionsBySearch(int userId,string searchKey)
+        {
+            try
+            {
+                using (var context = new MyDbContext())
+                {
+                    List<PaperAndPaperQuestionDTO> paperAndPaperQuestions = new List<PaperAndPaperQuestionDTO>();
+                    List<Paper> papers = context.Papers.Where(o => o.UserId == userId).Where(o => o.Name.Contains(searchKey)).ToList();
+                    foreach (var item in papers)
+                    {
+                        List<PaperQuestion> paperQuestions = context.PaperQuestions.Where(o => o.PaperId == item.PaperId).ToList();
+                        List<PaperQuestionDTO> paperQuestionDTOs = new List<PaperQuestionDTO>();
+                        foreach (var paperQuestion in paperQuestions)
+                        {
+                            var paperQuestionDTO = new PaperQuestionDTO();
+                            paperQuestionDTO.QuestionId = paperQuestion.QuestionId;
+                            paperQuestionDTOs.Add(paperQuestionDTO);
+                        }
+                        var paperAndPaperQuestion = new PaperAndPaperQuestionDTO();
+                        paperAndPaperQuestion.PaperId = item.PaperId;
+                        paperAndPaperQuestion.Name = item.Name;
+                        paperAndPaperQuestion.CreatedAt = item.CreatedAt;
+                        paperAndPaperQuestion.UserId = item.UserId;
+                        paperAndPaperQuestion.PaperQuestions = paperQuestionDTOs;
+                        paperAndPaperQuestions.Add(paperAndPaperQuestion);
+                    }
+                    return paperAndPaperQuestions;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public List<PaperAndPaperQuestionDTO> GetPaperAndPaperQuestionsByPaging(int userId, int pageNumber, int pageSize)
+        {
+            try
+            {
+                using (var context = new MyDbContext())
+                {
+                    List<PaperAndPaperQuestionDTO> paperAndPaperQuestions = new List<PaperAndPaperQuestionDTO>();
+                    List<Paper> papers = context.Papers.Where(o => o.UserId == userId).Skip((pageNumber - 1) * pageSize)
+                                                .Take(pageSize)
+                                                .ToList(); 
+                    foreach (var item in papers)
+                    {
+                        List<PaperQuestion> paperQuestions = context.PaperQuestions.Where(o => o.PaperId == item.PaperId).ToList();
+                        List<PaperQuestionDTO> paperQuestionDTOs = new List<PaperQuestionDTO>();
+                        foreach (var paperQuestion in paperQuestions)
+                        {
+                            var paperQuestionDTO = new PaperQuestionDTO();
+                            paperQuestionDTO.QuestionId = paperQuestion.QuestionId;
+                            paperQuestionDTOs.Add(paperQuestionDTO);
+                        }
+                        var paperAndPaperQuestion = new PaperAndPaperQuestionDTO();
+                        paperAndPaperQuestion.PaperId = item.PaperId;
+                        paperAndPaperQuestion.Name = item.Name;
+                        paperAndPaperQuestion.CreatedAt = item.CreatedAt;
+                        paperAndPaperQuestion.UserId = item.UserId;
+                        paperAndPaperQuestion.PaperQuestions = paperQuestionDTOs;
+                        paperAndPaperQuestions.Add(paperAndPaperQuestion);
+                    }
+                    return paperAndPaperQuestions;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
     }
 }

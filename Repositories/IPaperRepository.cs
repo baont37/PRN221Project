@@ -13,5 +13,9 @@ namespace Repositories
 
         List<PaperAndPaperQuestionDTO> Get(int uid);
 
+        List<PaperAndPaperQuestionDTO> GetPaperAndPaperQuestionsByPaging(int uid, int page, int pageSize);
+
+        List<PaperAndPaperQuestionDTO> GetPaperAndPaperQuestionsBySearch(int uid,string searchKey);
+
     }
 }

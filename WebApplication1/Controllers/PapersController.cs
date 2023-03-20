@@ -42,7 +42,7 @@ namespace WebApplication1.Controllers
 
         [Authorize]
         [HttpGet("papers")]
-        public IActionResult GetQuestion()
+        public IActionResult GetPapers()
         {
             try
             {
@@ -60,6 +60,51 @@ namespace WebApplication1.Controllers
             {
                 return BadRequest(e.Message);
             }
+        }
+
+        [Authorize]
+        [HttpGet("search")]
+        public IActionResult GetPapersBySearch(string searchKey)
+        {
+            try
+            {
+                var user = HttpContext.User;
+                var claims = ((System.Security.Claims.ClaimsIdentity)user.Identity).Claims;
+                var items = claims.ToList();
+                var jsonstr = items.Last().Value;
+                var uid = items[3].Value;
+
+                UserDTO userCurrent = userRepository.GetUserByUid(uid);
+                List<PaperAndPaperQuestionDTO> paperAndPaperQuestions = paperRepository.GetPaperAndPaperQuestionsBySearch(userCurrent.UserId,searchKey);
+                return Ok(paperAndPaperQuestions);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+        }
+        [Authorize]
+        [HttpGet("paging")]
+        public IActionResult GetPapersByPaging(int page, int pageSize)
+        {
+            try
+            {
+                var user = HttpContext.User;
+                var claims = ((System.Security.Claims.ClaimsIdentity)user.Identity).Claims;
+                var items = claims.ToList();
+                var jsonstr = items.Last().Value;
+                var uid = items[3].Value;
+
+                UserDTO userCurrent = userRepository.GetUserByUid(uid);
+                List<PaperAndPaperQuestionDTO> paperAndPaperQuestions = paperRepository.GetPaperAndPaperQuestionsByPaging(userCurrent.UserId, page, pageSize);
+                return Ok(paperAndPaperQuestions);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
         }
     }
 }
