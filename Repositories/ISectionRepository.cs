@@ -10,5 +10,7 @@ namespace Repositories
     public interface ISectionRepository
     {
         SectionDTO Add(SectionDTO questionAndAnswer);
+
+        List<SectionDTO> GetSectionsByUserId(int userId);
     }
 }

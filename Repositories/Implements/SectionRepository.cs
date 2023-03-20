@@ -16,5 +16,10 @@ namespace Repositories.Implements
         {
             return sectionDAO.AddSection(sectionDTO);
         }
+
+        public List<SectionDTO> GetSectionsByUserId(int userId)
+        {
+            return sectionDAO.GetSectionsByUserId(userId);
+        }
     }
 }
